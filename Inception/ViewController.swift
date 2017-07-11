@@ -53,7 +53,7 @@ class ViewController: UIViewController {
     }
 
     request = VNCoreMLRequest(model: visionModel, completionHandler: requestDidComplete)
-    request.imageCropAndScaleOption = VNImageCropAndScaleOptionCenterCrop
+    request.imageCropAndScaleOption = .centerCrop
   }
 
   // MARK: - UI stuff
