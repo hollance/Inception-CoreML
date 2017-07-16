@@ -11,7 +11,11 @@ class ViewController: UIViewController {
 
   var videoCapture: VideoCapture!
   var request: VNCoreMLRequest!
-  var startTime: CFTimeInterval = 0
+  var startTimes: [CFTimeInterval] = []
+
+  var framesDone = 0
+  var frameCapturingStartTime = CACurrentMediaTime()
+  let semaphore = DispatchSemaphore(value: 2)
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -33,7 +37,7 @@ class ViewController: UIViewController {
   func setUpCamera() {
     videoCapture = VideoCapture()
     videoCapture.delegate = self
-    videoCapture.fps = 10
+    videoCapture.fps = 50
     videoCapture.setUp { success in
       if success {
         // Add the video preview into the UI.
@@ -76,8 +80,10 @@ class ViewController: UIViewController {
   typealias Prediction = (String, Double)
 
   func predict(pixelBuffer: CVPixelBuffer) {
-    // Measure how long it takes to predict a single video frame.
-    startTime = CACurrentMediaTime()
+    // Measure how long it takes to predict a single video frame. Note that
+    // predict() can be called on the next frame while the previous one is
+    // still being processed. Hence the need to queue up the start times.
+    startTimes.append(CACurrentMediaTime())
 
     let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer)
     try? handler.perform([request])
@@ -93,6 +99,7 @@ class ViewController: UIViewController {
 
       DispatchQueue.main.async {
         self.show(results: top5)
+        self.semaphore.signal()
       }
     }
   }
@@ -104,16 +111,34 @@ class ViewController: UIViewController {
     }
     predictionLabel.text = s.joined(separator: "\n\n")
 
-    let elapsed = CACurrentMediaTime() - startTime
-    timeLabel.text = String(format: "Elapsed %.5f seconds (%.2f FPS)", elapsed, 1/elapsed)
+    let elapsed = CACurrentMediaTime() - startTimes.remove(at: 0)
+    let fps = self.measureFPS()
+    timeLabel.text = String(format: "Elapsed %.5f seconds - %.2f FPS", elapsed, fps)
+  }
+
+  func measureFPS() -> Double {
+    // Measure how many frames were actually delivered per second.
+    framesDone += 1
+    let frameCapturingElapsed = CACurrentMediaTime() - frameCapturingStartTime
+    let currentFPSDelivered = Double(framesDone) / frameCapturingElapsed
+    if frameCapturingElapsed > 1 {
+      framesDone = 0
+      frameCapturingStartTime = CACurrentMediaTime()
+    }
+    return currentFPSDelivered
   }
 }
 
 extension ViewController: VideoCaptureDelegate {
   func videoCapture(_ capture: VideoCapture, didCaptureVideoFrame pixelBuffer: CVPixelBuffer?, timestamp: CMTime) {
     if let pixelBuffer = pixelBuffer {
-      // Perform the prediction on VideoCapture's queue.
-      predict(pixelBuffer: pixelBuffer)
+      // For better throughput, perform the prediction on a background queue
+      // instead of on the VideoCapture queue. We use the semaphore to block
+      // the capture queue and drop frames when Core ML can't keep up.
+      semaphore.wait()
+      DispatchQueue.global().async {
+        self.predict(pixelBuffer: pixelBuffer)
+      }
     }
   }
 }
