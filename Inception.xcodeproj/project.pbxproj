@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7B1CEB9721567C6500BB01C9 /* CVPixelBuffer+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1CEB9621567C6500BB01C9 /* CVPixelBuffer+Helpers.swift */; };
 		7BF035A81EF053B400E537BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF035A71EF053B400E537BE /* AppDelegate.swift */; };
 		7BF035AA1EF053B400E537BE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF035A91EF053B400E537BE /* ViewController.swift */; };
 		7BF035AD1EF053B400E537BE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7BF035AB1EF053B400E537BE /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7B1CEB9621567C6500BB01C9 /* CVPixelBuffer+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CVPixelBuffer+Helpers.swift"; sourceTree = "<group>"; };
 		7BF035A41EF053B400E537BE /* Inception.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inception.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BF035A71EF053B400E537BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7BF035A91EF053B400E537BE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -60,6 +62,7 @@
 			children = (
 				7BF035A71EF053B400E537BE /* AppDelegate.swift */,
 				7BF035AE1EF053B400E537BE /* Assets.xcassets */,
+				7B1CEB9621567C6500BB01C9 /* CVPixelBuffer+Helpers.swift */,
 				7BF035BA1EF0540300E537BE /* Inceptionv3.mlmodel */,
 				7BF035B31EF053B400E537BE /* Info.plist */,
 				7BF035AB1EF053B400E537BE /* Main.storyboard */,
@@ -141,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BF035BC1EF057F700E537BE /* VideoCapture.swift in Sources */,
+				7B1CEB9721567C6500BB01C9 /* CVPixelBuffer+Helpers.swift in Sources */,
 				7BF035AA1EF053B400E537BE /* ViewController.swift in Sources */,
 				7BF035BB1EF0540600E537BE /* Inceptionv3.mlmodel in Sources */,
 				7BF035A81EF053B400E537BE /* AppDelegate.swift in Sources */,
